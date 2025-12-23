@@ -1,17 +1,27 @@
 package ticket.booking.entities;
 
-import java.sql.Time;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class Train {
+
     private String trainId;
+
     private String trainNo;
+
     private List<List<Integer>> seats;
-    private Map<String,String> stationTimes;
+
+    private Map<String, String> stationTimes;
+
     private List<String> stations;
+
     public Train(){}
-    public Train(String trainId, String trainNo, List<List<Integer>> seats, Map<String,String> stationTimes, List<String> stations){
+
+    public Train(String trainId, String trainNo, List<List<Integer>> seats, Map<String, String> stationTimes, List<String> stations){
         this.trainId = trainId;
         this.trainNo = trainNo;
         this.seats = seats;
@@ -62,4 +72,5 @@ public class Train {
     public String getTrainInfo(){
         return String.format("Train ID: %s Train No: %s", trainId, trainNo);
     }
+
 }

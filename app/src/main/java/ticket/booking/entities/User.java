@@ -1,9 +1,13 @@
 package ticket.booking.entities;
 
 
-import java.util.List;
 
+
+
+import java.util.List;
+@SuppressWarnings("unused")
 public class User{
+
         private String name;
         private String password;
         private String hashedPassword;

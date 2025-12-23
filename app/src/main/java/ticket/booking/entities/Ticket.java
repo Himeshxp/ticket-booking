@@ -1,7 +1,6 @@
 package ticket.booking.entities;
 
-import java.util.Date;
-
+@SuppressWarnings("unused")
 public class Ticket {
     private  String ticketId;
     private String userId;

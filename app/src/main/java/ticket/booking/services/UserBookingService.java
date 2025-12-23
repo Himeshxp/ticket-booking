@@ -2,6 +2,7 @@ package ticket.booking.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import ticket.booking.entities.Train;
 import ticket.booking.entities.User;
 import ticket.booking.util.UserServiceUtil;
@@ -14,8 +15,10 @@ import java.util.Optional;
 
 public class UserBookingService {
     private User user;
-    private final String USER_FILE_PATH = "app/src/main/java/ticket.booking/localDb/users.json";
-    private  ObjectMapper objectMapper = new ObjectMapper();
+    private static String USER_FILE_PATH = "app/src/main/java/ticket/booking/localDb/users.json";
+    ObjectMapper objectMapper = new ObjectMapper();
+
+
     private List<User> userList;
 
     public UserBookingService() throws IOException{
@@ -23,10 +26,24 @@ public class UserBookingService {
     }
 
     private void loadUserprofileFile() throws IOException {
-        userList = objectMapper.readValue(new File(USER_FILE_PATH), new TypeReference<List<User>>() {
-        });
+        File file = new File(USER_FILE_PATH);
 
+        // ensure directory exists
+        file.getParentFile().mkdirs();
+
+        // first run or empty file
+        if (!file.exists() || file.length() == 0) {
+            userList = new ArrayList<>();
+            objectMapper.writeValue(file, userList);
+            return;
+        }
+
+        userList = objectMapper.readValue(
+                file,
+                new TypeReference<List<User>>() {}
+        );
     }
+
 
     private void saveUserListToFile() throws IOException {
         File usersFile = new File(USER_FILE_PATH);
