@@ -65,8 +65,8 @@ public class App {
                     System.out.println("Type your source station");
                     String source = input.next();
                     System.out.println("Type your destination station");
-                    String dest = input.next();
-                    List<Train> trains = userBookingService.getTrains(source, dest);
+                    String destination = input.next();
+                    List<Train> trains = userBookingService.getTrains(source,destination);
                     if (trains.isEmpty()) {
                         System.out.println("No trains found.");
                         break;
