@@ -9,6 +9,7 @@ The project focuses on applying core Java and OOP concepts with a clean, modular
 - Ticket booking simulation
 - Data persistence using JSON files
 - Modular package-based architecture
+- Fetching and cancellation not working 
 
 ## Tech Stack
 - Java
