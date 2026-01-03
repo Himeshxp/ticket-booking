@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class Train {
 
     private String trainId;
@@ -69,8 +68,5 @@ public class Train {
         this.stations = stations;
     }
 
-    public String getTrainInfo(){
-        return String.format("Train ID: %s Train No: %s", trainId, trainNo);
-    }
 
 }

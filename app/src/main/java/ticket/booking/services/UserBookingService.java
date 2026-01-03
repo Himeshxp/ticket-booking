@@ -2,8 +2,6 @@ package ticket.booking.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import ticket.booking.entities.Ticket;
 import ticket.booking.entities.Train;
 import ticket.booking.entities.User;
 import ticket.booking.util.UserServiceUtil;
@@ -13,11 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public class UserBookingService {
     private User user;
-    private static String USER_FILE_PATH = "app/src/main/java/ticket/booking/localDb/users.json";
+    private static final String USER_FILE_PATH = "app/src/main/java/ticket/booking/localDb/users.json";
     ObjectMapper objectMapper = new ObjectMapper();
 
 
@@ -67,6 +64,7 @@ public class UserBookingService {
     }
 
     public Boolean signUp(User user1) {
+        user = user1;
         try {
             userList.add(user1);
             saveUserListToFile();
@@ -81,10 +79,7 @@ public class UserBookingService {
             return user1.getName().equals(user.getName())
                     && UserServiceUtil.checkPassword(user.getPassword(), user1.getHashedPassword());
         }).findFirst();
-        if (userFetched.isPresent()) {
-            userFetched.get().printTickets();
-
-        }
+        userFetched.ifPresent(User::printTickets);
 
     }
 //public void fetchBookings() {
@@ -142,6 +137,7 @@ public class UserBookingService {
             return Boolean.FALSE;
         }
     }
+    // #endregion
 //public Boolean bookTrainSeat(Train train, int row, int seat) {
 //    try {
 //        TrainService trainService = new TrainService();

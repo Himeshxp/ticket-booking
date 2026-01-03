@@ -2,64 +2,60 @@ package ticket.booking.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
 import ticket.booking.entities.Train;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class TrainService {
+
     private List<Train> trainList;
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
-
-
-    private static final String TRAIN_DB_PATH = "app/src/main/java/ticket/booking/localDb/trains.json";
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private static final String TRAIN_DB_PATH = "../localDB/trains.json";
 
     public TrainService() throws IOException {
         File trains = new File(TRAIN_DB_PATH);
-
-        trains.getParentFile().mkdirs();
-
-        if (!trains.exists() || trains.length() == 0) {
-            trainList = new ArrayList<>();
-            objectMapper.writeValue(trains, trainList);
-            return;
-        }
-
-        trainList = objectMapper.readValue(
-                trains,
-                new TypeReference<List<Train>>() {}
-        );
+        trainList = objectMapper.readValue(trains, new TypeReference<List<Train>>() {});
     }
 
-    public List<Train> searchTrains(String source,String destination){
-        return trainList.stream().filter(train ->validTrain(train,source,destination)).collect(Collectors.toList());
-    }
-
-    private boolean validTrain(Train train, String source, String destination) {
-        List<String> stationOrder=train.getStations();
-        int sourceIndex=stationOrder.indexOf(source.toLowerCase());
-        int destinationIndex=stationOrder.indexOf(destination.toLowerCase());
-        return sourceIndex!= -1 && destinationIndex!=-1 && sourceIndex<destinationIndex;
+    public List<Train> searchTrains(String source, String destination) {
+        return trainList.stream().filter(train -> validTrain(train, source, destination)).collect(Collectors.toList());
     }
 
     public void addTrain(Train newTrain) {
-        Optional<Train> existingtrain=trainList.stream().filter(train ->train.getTrainId().equalsIgnoreCase(newTrain.getTrainId())).findFirst();
+        // Check if a train with the same trainId already exists
+        Optional<Train> existingTrain = trainList.stream()
+                .filter(train -> train.getTrainId().equalsIgnoreCase(newTrain.getTrainId()))
+                .findFirst();
 
-        if(existingtrain.isPresent()){
+        if (existingTrain.isPresent()) {
+            // If a train with the same trainId exists, update it instead of adding a new one
             updateTrain(newTrain);
-        }else{
+        } else {
+            // Otherwise, add the new train to the list
             trainList.add(newTrain);
             saveTrainListToFile();
+        }
+    }
+
+    public void updateTrain(Train updatedTrain) {
+        // Find the index of the train with the same trainId
+        OptionalInt index = IntStream.range(0, trainList.size())
+                .filter(i -> trainList.get(i).getTrainId().equalsIgnoreCase(updatedTrain.getTrainId()))
+                .findFirst();
+
+        if (index.isPresent()) {
+            // If found, replace the existing train with the updated one
+            trainList.set(index.getAsInt(), updatedTrain);
+            saveTrainListToFile();
+        } else {
+            // If not found, treat it as adding a new train
+            addTrain(updatedTrain);
         }
     }
 
@@ -71,14 +67,12 @@ public class TrainService {
         }
     }
 
-    private void updateTrain(Train updatedTrain) {
-        OptionalInt index=IntStream.range(0,trainList.size()).filter(
-                i ->trainList.get(i).getTrainId().equalsIgnoreCase(updatedTrain.getTrainId())).findFirst();
-        if(index.isPresent()){
-            trainList.set(index.getAsInt(),updatedTrain);
-            saveTrainListToFile();
-        }else{
-            addTrain(updatedTrain);
-        }
+    private boolean validTrain(Train train, String source, String destination) {
+        List<String> stationOrder = train.getStations();
+
+        int sourceIndex = stationOrder.indexOf(source.toLowerCase());
+        int destinationIndex = stationOrder.indexOf(destination.toLowerCase());
+
+        return sourceIndex != -1 && destinationIndex != -1 && sourceIndex < destinationIndex;
     }
 }

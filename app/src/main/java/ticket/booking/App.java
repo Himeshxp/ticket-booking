@@ -5,9 +5,8 @@ package ticket.booking;
 
 import ticket.booking.entities.Train;
 import ticket.booking.entities.User;
-import ticket.booking.services.UserBookingService;
+import ticket.booking.services.*;
 import ticket.booking.util.UserServiceUtil;
-
 import java.io.IOException;
 import java.util.*;
 
@@ -20,7 +19,7 @@ public class App {
         try{
             userBookingService = new UserBookingService();
         }catch(IOException ex){
-            ex.printStackTrace();
+            System.out.println("Something went wrong");
             return;
         }
         Train trainSelectedForBooking = null;
